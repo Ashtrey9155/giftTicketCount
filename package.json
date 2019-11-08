@@ -1,0 +1,17 @@
+{
+  "name": "giftticketcount",
+  "version": "1.0.0",
+  "description": "App for count gift tickets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo('Hello, world!!!')"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "@babel/preset-env": "^7.7.1"
+  }
+}
