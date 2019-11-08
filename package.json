@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "description": "App for count gift tickets",
   "main": "index.js",
+  "bin": {
+    "brain-even": "dist/bin/test.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo('Hello, world!!!')"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
   },
   "author": "",
   "license": "ISC",
