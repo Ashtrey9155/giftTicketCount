@@ -21,5 +21,10 @@
     "@babel/core": "^7.7.2",
     "@babel/node": "^7.7.0",
     "@babel/preset-env": "^7.7.1"
+  },
+  "dependencies": {
+    "gmail-parser": "^1.1.4",
+    "googleapis": "^39.2.0",
+    "js-base64": "^2.5.1"
   }
 }
