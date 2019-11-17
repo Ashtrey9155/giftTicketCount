@@ -1,3 +1,4 @@
 /node_modules/
 dist
 src/bin/credentials.json
+src/bin/token.json
