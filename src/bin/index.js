@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
@@ -80,9 +81,9 @@ function listLabels(auth) {
     if (err) return console.log('The API returned an error: ' + err);
     const labels = res.data.labels;
     if (labels.length) {
-      console.log('Labels:');
+      // console.log('Labels:');
       labels.forEach((label) => {
-        console.log(`Title: ${label.name} | ID: ${label.id}`);
+        // console.log(`Title: ${label.name} | ID: ${label.id}`);
       });
       //gMailListUserMessages();
     } else {
@@ -90,39 +91,77 @@ function listLabels(auth) {
     }
   });
 }
-/**
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
+
+
+
+
+
+
   function gMailListUserMessages(auth) {
     const gmail = google.gmail({version: 'v1', auth});
+    const jsonObj = [];
     	gmail.users.messages.list({
       		userId: 'me',
       		includeSpamTrash: false,
       		labelIds: [
         		"Label_3859400968981087020"
-      		],
+          ],
+          "q": "is:unread"
     	}, (err, response) => {
         if (err) {
           console.log('The Gmail API returned an error: ' + err);
           return;
         }
-        const message_id = response.data.messages[0].id;
-        gmail.users.messages.get({
-          userId: 'me',
-          id: message_id,
+        if (response.data.resultSizeEstimate === 0) return console.log(response.data);
 
-        }, (err, response) => {
-          if (err) return console.log('The API returned an error: ' + err);
-          const message_raw = response.data.payload.parts[0].body.data;
-          const data = message_raw;  
-          const buff = new Buffer(data, 'base64');  
-          const text = buff.toString();
-          console.log(text);
-          // console.log('RES: ',response.data.payload.parts[0].body.data);
-        });
-        // console.log('RES: ', message_id);
-        // console.log('RES: ',response);
-	});
+        //const message_id = response.data.messages[0].id;
+        const messagesUnread = response.data.messages;
+        
+
+        messagesUnread.reduce((acc, e) => {
+          gmail.users.messages.get({
+            userId: 'me',
+            id: e.id
+          }, (err, response) => {
+            if (err) return console.log('The API returned an error: ' + err);
+            let item = {};
+            const message_raw = response.data.payload.parts[0].body.data;
+            const data = message_raw;  
+            const buff = Buffer.from(data, 'base64');  
+            const str = buff.toString();
+
+            const id = str.match(/Извещение № (.+)/);
+            const dataTime = str.match(/Время платежа: (.+)/);
+            const cash = str.match(/Сумма: (.+)/);
+            const nomberTrunsaction = str.match(/Номер транзакции: (.+)/);
+            const identityClient = str.match(/Идентификатор клиента: (.+)/);
+            const fioClient = str.match(/Ф.И.О.: (.+)/);
+            const addresClient = str.match(/Адрес доставки: (.+)/);
+            const emailClient = str.match(/E-mail: ().+/);
+            const service = str.match(/Подарочный сертификат на (.+)#/);
+            const ref = str.match(/#REF(.+)/);
+            const owner = str.match(/Владелец: (.+)/);
+            
+            item["id"] = id[1];
+            item["dataTime"] = dataTime[1];
+            item["nomberTrunsaction"] = nomberTrunsaction[1];
+            item["identityClient"] = identityClient[1];
+            item["fioClient"] = fioClient[1];
+            item["addresClient"] = addresClient[1];
+            item["emailClient"] = emailClient[1];
+            item["service"] = service[1];
+            item["ref"] = ref[1];
+            item["owner"] = owner[1];
+
+            jsonObj.push(item);
+
+            // console.log(jsonObj);
+            
+            // console.log('RES: ',response.data.payload.parts[0].body.data);
+            });
+          
+        }, jsonObj);
+           
+    });
+    
 }
