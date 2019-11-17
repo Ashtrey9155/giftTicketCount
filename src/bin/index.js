@@ -141,13 +141,12 @@ function listLabels(auth) {
             const service = str.match(/Подарочный сертификат на (.+)#/);
             const ref = str.match(/#REF(.+)/);
             const owner = str.match(/Владелец: (.+)/);
-            
             item["id"] = id[1];
             item["dataTime"] = dataTime[1];
             item["nomberTrunsaction"] = nomberTrunsaction[1];
             item["identityClient"] = identityClient[1];
             item["fioClient"] = fioClient[1];
-            item["addresClient"] = addresClient[1];
+            item["addresClient"] = (addresClient != null)? addresClient[1] : "";
             item["emailClient"] = emailClient[1];
             item["service"] = service[1];
             item["ref"] = ref[1];
